@@ -35,33 +35,27 @@ $(document).ready(function () {
     $.fn.dataTable.ext.errMode = 'none';
 
     $('#registerTools').DataTable({
-        language: {
-            url: '/js/datatables/i18n/de-DE.json',
-        },
         searching: false,
         lengthChange: false,
         pageLength: 4,
         ajax: {
-            url: "/api/v2/asanet/devices",
+            url: "http://localhost:3000/api/v2/asanet/devices",
             dataSrc: ''
         },
         columns: [
-            {data: 'name'},
-            {data: 'manufactor'},
-            {data: 'version'},
-            {data: "os"}
+            {title: 'name'},
+            {title: 'manufactor'},
+            {title: 'version'},
+            {title: "os"}
         ]
     });
 
     $('#orderList').DataTable({
-        language: {
-            url: '/js/datatables/i18n/de-DE.json',
-        },
         lengthChange: false,
         pageLength: 20,
         order: [[0, 'desc']],
         ajax: {
-            url: "/api/v2/db/order/list",
+            url: "http://localhost:3000/api/v2/db/order/list",
             dataSrc: '',
             data: {
                 "from": formatStringToDate(startDate),
@@ -102,16 +96,13 @@ $(document).ready(function () {
      * DATA-TABLE: PDF-REPORTS
      */
     var table = $('#PdfReportList').DataTable({
-        language: {
-            url: '/js/datatables/i18n/de-DE.json',
-        },
         "searching": true,
         "lengthChange": false,
         "pageLength": 20,
         "autoWidth": false,
         order: [[0, 'desc']],
         ajax: {
-            url: "/api/v2/db/pdf-report/list",
+            url: "http://localhost:3000/api/v2/db/pdf-report/list",
             dataSrc: '',
             data: {
                 "from": formatStringToDate(startDate),
@@ -189,21 +180,19 @@ $(document).ready(function () {
 
     var elementExists = document.getElementById("tagesDiagramm");
     if (elementExists != null) {
-
-
-        fetch('/api/v2/db/order/statistic?from=' + formatStringToDate(startDate) + '&until=' + formatStringToDate(endDate))
+        
+        fetch('http://localhost:3000/api/v2/db/order/statistic?from=' + formatStringToDate(startDate) + '&until=' + formatStringToDate(endDate))
             .then(response => response.json())
             .then(data => {
-                const labels = [];
-                const dataPoints = [];
-                const currentDate = new Date(formatStringToDate(startDate));
-                while (currentDate <= new Date(formatStringToDate(endDate))) {
-
-                    const currentDateISO = currentDate.toISOString().split('T')[0];
-                    labels.push(currentDateISO);
-                    dataPoints.push(data.dates[currentDateISO] || 0);
-                    currentDate.setDate(currentDate.getDate() + 1);
-                }
+                const labels = data.labels;
+                const dataPoints = data.dataPoints;
+                // const currentDate = new Date(formatStringToDate(startDate));
+                // while (currentDate <= new Date(formatStringToDate(endDate))) {
+                //     const currentDateISO = currentDate.toISOString().split('T')[0];
+                //     labels.push(currentDateISO);
+                //     dataPoints.push(data.dates[currentDateISO] || 0);
+                //     currentDate.setDate(currentDate.getDate() + 1);
+                // }
 
                 // Diagramm erstellen
                 createChart(labels, dataPoints);
